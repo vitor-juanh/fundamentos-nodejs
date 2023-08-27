@@ -6,6 +6,25 @@ const app = express();
 app.use(express.json());
 
 const customers = [];
+// Middleware
+
+function verifyIfExistsAccountCPF(request, response, next) {
+    const { cpf } = request.params;
+
+    const customer = customers.find(
+        customer => customer.cpf === cpf
+    );
+
+    if (!customer) {
+        response.status(400).json({ error: "Customer not found!" });
+    }
+
+    request.customer = customer;
+
+    return next();
+}
+
+// Routes
 
 // Create an account
 /**
@@ -35,21 +54,12 @@ app.post('/account', (request, response) => {
     return response.status(201).send();
 });
 
-// Get statement
+// Search statement
 /**
  * cpf - string
  */
-app.get('/statement/:cpf', (request, response) => {
-    const { cpf } = request.params;
-
-    const customer = customers.find(
-        customer => customer.cpf === cpf
-    );
-
-    if (!customer) {
-        response.status(400).json({ error: "Customer not found!" });
-    }
-
+app.get('/statement/:cpf', verifyIfExistsAccountCPF, (request, response) => {
+    const { customer } = request;
     return response.json(customer.statement);
 });
 
