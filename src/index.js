@@ -9,7 +9,7 @@ const customers = [];
 // Middleware
 
 function verifyIfExistsAccountCPF(request, response, next) {
-    const { cpf } = request.params;
+    const { cpf } = request.headers;
 
     const customer = customers.find(
         customer => customer.cpf === cpf
@@ -58,9 +58,32 @@ app.post('/account', (request, response) => {
 /**
  * cpf - string
  */
-app.get('/statement/:cpf', verifyIfExistsAccountCPF, (request, response) => {
+app.get('/statement', verifyIfExistsAccountCPF, (request, response) => {
     const { customer } = request;
     return response.json(customer.statement);
+});
+
+// Deposit
+/**
+ * description - string
+ * amount - number
+ * type - string
+ * created_at - date
+ */
+app.post('/deposit', verifyIfExistsAccountCPF, (request, response) => {
+    const { description, amount } = request.body;
+    const { customer } = request;
+
+    const statementOperation = {
+        description,
+        amount,
+        type: "credit",
+        created_at: new Date(),
+    };
+
+    customer.statement.push(statementOperation);
+
+    return response.status(201).send();
 });
 
 app.listen(3333);
