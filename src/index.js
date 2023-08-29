@@ -91,6 +91,16 @@ app.get('/account', verifyIfExistsAccountCPF, (request, response) => {
     return response.json(customer);
 });
 
+// Delete an account
+app.delete('/account', verifyIfExistsAccountCPF, (request, response) => {
+    const { customer } = request;
+
+    // splice
+    customers.splice(customer, 1);
+
+    return response.status(200).json(customers);
+});
+
 // Search statement
 /**
  * cpf - string
