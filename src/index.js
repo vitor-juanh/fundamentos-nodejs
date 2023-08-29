@@ -101,6 +101,15 @@ app.delete('/account', verifyIfExistsAccountCPF, (request, response) => {
     return response.status(200).json(customers);
 });
 
+// Get balance
+app.get('/balance', verifyIfExistsAccountCPF, (request, response) => {
+    const { customer } = request;
+
+    const balance = getBalance(customer.statement);
+
+    return response.json(balance);
+});
+
 // Search statement
 /**
  * cpf - string
