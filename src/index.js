@@ -71,6 +71,26 @@ app.post('/account', (request, response) => {
     return response.status(201).send();
 });
 
+// Modify an account
+/**
+ * name - string
+ */
+app.put('/account', verifyIfExistsAccountCPF, (request, response) => {
+    const { name } = request.body;
+    const { customer } = request;
+
+    customer.name = name;
+
+    return response.status(201).send();
+});
+
+// Get an account
+app.get('/account', verifyIfExistsAccountCPF, (request, response) => {
+    const { customer } = request;
+
+    return response.json(customer);
+});
+
 // Search statement
 /**
  * cpf - string
